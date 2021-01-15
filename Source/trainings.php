@@ -4,7 +4,7 @@
 Trainings Database
 </title>
 </head>
-<body>MARIUUUUUUUUUUUUUUUUUUUUSSSSSSSSSSSSSSSSSSSSSSSSS
+<body>
 <form id = "t" method="post">
     <select name ="table">
         <option selected="selected">Choose one</option>
