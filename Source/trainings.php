@@ -5,7 +5,7 @@ Trainings Database
 </title>
 </head>
 <body>
-
+//CAN YOU SPOT THE ERROR ? //
 <form id = "t" method="post">
     <select name ="table">
         <option selected="selected">Choose one</option>
