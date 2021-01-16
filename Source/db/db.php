@@ -18,13 +18,14 @@ function connect()
 function logIn($username, $password)
 {
     $mysqli = connect();
-    $mysqli->query(
-        'SELECT * FROM Users WHERE
+    $result = $mysqli->query(
+        'SELECT COUNT(*) AS UserCount FROM Users WHERE '
             . 'username=' . "'$username'"
             . ' AND '
             . 'password=' . "'$password'"
-    ');
-    return $mysqli->num_rows == 1;
+    );
+    $row = $result->fetch_assoc();
+    return $row['UserCount'];
 }
 function getActiveTrainings()
 {
