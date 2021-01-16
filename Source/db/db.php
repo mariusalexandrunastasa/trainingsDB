@@ -160,8 +160,14 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
     if ($trainerId == -1) {
         $trainerId =  createTrainer($trainerName);
     }
+    $mysqli = connect();
+    $mysqli->query('INSERT INTO Trainings(TrainingName,StartDate,EndDate,
+                                InviteUrl,Cost,DepartamentId,TrainerId,LocationId) 
+    VALUES ("' . $trainingName . '",' . $startDate . ',' . $endDate . ',
+             "' . $inviteUrl . '",' . $cost . ',' . $departamentId . ',
+             ' . $trainerId . ',' . $locationId . ')');
+    return $mysqli->insert_id;
 
-    return 'Success';
 }
 function updateTraining($trainingId, $trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
