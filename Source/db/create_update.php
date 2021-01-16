@@ -21,7 +21,7 @@ if (!is_numeric($trainingId)) {
         $trainerName,
         $locationId
     );
-    if ($result != 'Success')
+    if ($result != VALIDATION_OK)
         echo '<p style="color:red">' . $result . '</p>';
     else {
         header("Location: /trainings.php");

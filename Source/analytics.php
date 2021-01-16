@@ -4,6 +4,7 @@
     <title>Training management</title>
     <link rel="stylesheet" href="table.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style_forms.css">
 
 </head>
 
@@ -12,7 +13,7 @@
     require 'utils/users.php';
     checkIfUserIsLoggedIn();
     ?>
-    
+
     <?php
     $activePage = $_SERVER['REQUEST_URI'];
     ?>
@@ -25,6 +26,24 @@
         </div>
     </div>
 
+    <div class="flex">
+        <div class="flex-item">
+            <form action="analytics.php" method="POST" class="form">
+                <input type="text" name="trainingNames" placeholder="Training Names">
+                <input type="text" name="trainersNames" placeholder="Trainers Names">
+
+                <input type="submit" value="Search" />
+            </form>
+        </div>
+        <div class="flex-item">
+            <?php
+            //include 'utils/table.php';
+            require 'utils/filter.php';
+
+            ?>
+        </div>
+
+    </div>
 </body>
 
 </html>

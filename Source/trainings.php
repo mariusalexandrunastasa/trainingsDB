@@ -25,12 +25,8 @@
   </div>
   <a href="create_update.php" class="button">Create new Training</a>
 
-  <div class="content">
-    <?php
-    require 'db/db_to_html.php';
-    displayTrainingsTable();
-    ?>
-  </div>
+  <?php
+  include 'utils/table.php'; ?>
 </body>
 
 </html>

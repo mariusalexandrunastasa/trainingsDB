@@ -1,0 +1,15 @@
+.flex {
+    display: flex;
+}
+
+.flex-item-left {
+    flex-grow: 33%;
+}
+
+.flex-item-right {
+    flex-grow: 77%;
+}
+
+.form {
+    width: 100%;
+}

@@ -85,7 +85,7 @@ function getLocations()
 function deleteTraining($id)
 {
     $mysqli = connect();
-    $sql = "DELETE FROM Trainings WHERE id=" . $id;
+    $sql = "UPDATE Trainings SET IsDeleted=true  WHERE id=" . $id;
     $mysqli->query($sql);
     return $mysqli->affected_rows;
 }
