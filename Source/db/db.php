@@ -85,7 +85,7 @@ function getLocations()
 function deleteTraining($id)
 {
     $mysqli = connect();
-    $sql = "DELETE FROM Trainings WHERE id=" . $id;
+    $sql = "UPDATE Trainings SET IsDeleted=true  WHERE id=" . $id;
     $mysqli->query($sql);
     return $mysqli->affected_rows;
 }
@@ -161,7 +161,27 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         $trainerId =  createTrainer($trainerName);
     }
 
-    return 'Success';
+    $mysqli = connect();
+    $mysqli->query('INSERT INTO Trainings(
+        TrainingName,
+        StartDate,
+        EndDate,
+        InviteUrl,
+        Cost,
+        DepartamentId,
+        TrainerId,
+        LocationId) 
+    VALUES (
+        "' . $trainingName
+        . '",' . "'  $startDate  '"
+        . ',' .  "'  $endDate  '"
+        . ',"' . $inviteUrl
+        . '",' . $cost
+        . ',' . $departamentId
+        . ',' . $trainerId
+        . ',' . $locationId
+        . ')');
+    return $mysqli->insert_id;
 }
 function updateTraining($trainingId, $trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
@@ -195,6 +215,7 @@ function validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost
     if (!departmentExists($departamentId)) {
         return INVALID_DEPT;
     }
+
     if (!locationExists($locationId)) {
         return INVALID_LOC;
     }

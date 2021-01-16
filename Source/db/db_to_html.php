@@ -1,8 +1,9 @@
 <?php
 require_once 'db.php';
+
 function displayTrainings($trainings)
 {
-    echo '<div style="text-align: center;">Total Trainings: ' . count($trainings) . '</div>';
+    echo '<div>Total Trainings: ' . count($trainings) . '</div>';
     if (count($trainings) == 0) {
         echo "<br>Did not find any trainigs";
         return;
@@ -21,7 +22,6 @@ function displayTrainings($trainings)
     <th>Actions</th>
 
 </tr>';
-
     foreach ($trainings as $training) {
         echo '<tr>';
         echo '<td>' .  $training['Id'] . '</td>';

@@ -8,7 +8,7 @@ $cost = $_POST['cost'];
 $departamentId = $_POST['departament'];
 $trainerName = $_POST['trainerName'];
 $locationId = $_POST['location'];
-require 'db.php';
+require_once 'db.php';
 
 if (!is_numeric($trainingId)) {
     $result = createTraining(
@@ -21,7 +21,7 @@ if (!is_numeric($trainingId)) {
         $trainerName,
         $locationId
     );
-    if ($result != 'Success')
+    if ($result < 1)
         echo '<p style="color:red">' . $result . '</p>';
     else {
         header("Location: /trainings.php");
@@ -46,4 +46,5 @@ if (!is_numeric($trainingId)) {
         die();
     }
 }
+
 echo '<a href="/trainings.php">Go back!</a>';

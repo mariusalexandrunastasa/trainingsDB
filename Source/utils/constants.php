@@ -9,5 +9,3 @@ const INVALID_DATES='Validation Error! Start date must be less than End date';
 const VALIDATION_OK='Ok';
 
 const USER_LOGGED_IN="LoggedIn";
-
-?>
