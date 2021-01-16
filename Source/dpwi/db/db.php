@@ -137,34 +137,68 @@ function createTrainer($trainerName)
 }
 function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
-    if (!departmentExists($departamentId)) {
-        return 'Validation Error! Invalid department';
-    }
-    if (!locationExists($locationId)) {
-        return 'Validation Error! Invalid location';
-    }
+    $validationResult = validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId);
 
-    if (strlen($trainingName) < 2)
-        return 'Validation Error! Training name must be at least 3 chars long';
-
-    if (!is_numeric($cost)) {
-        return 'Validation Error! Cost must be numeric';
-    } else if ($cost < 1)
-        return 'Validation Error! Cost must be greater than 1';
-
-    if (strlen($trainerName) < 2)
-        return 'Validation Error! Trainer name must be at least 3 chars long';
-
+    if ($validationResult != VALIDATION_OK)
+        return $validationResult;
 
     $trainerId = getTrainerId($trainerName);
-    echo $trainerId;
 
     if ($trainerId == -1) {
         $trainerId =  createTrainer($trainerName);
     }
 
-    //return 'Success';
+    return 'Success';
 }
 function updateTraining($trainingId, $trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
+    $validationResult = validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId);
+    if ($validationResult != VALIDATION_OK)
+        return $validationResult;
+
+    $trainerId = getTrainerId($trainerName);
+    if ($trainerId == -1) {
+        $trainerId =  createTrainer($trainerName);
+    }
+
+    $mysqli = connect();
+    $mysqli->query(
+        'UPDATE Trainings SET '
+            . ' TrainingName =' . "' $trainingName '"
+            . ', StartDate=' . "'$startDate'"
+            . ', EndDate=' . "'$endDate'"
+            . ', InviteUrl=' . "' $inviteUrl '"
+            . ', Cost=' . (float)$cost
+            . ', DepartamentId=' . (int)$departamentId
+            . ', LocationId=' . (int)$locationId
+            . ', TrainerId=' . (int) $trainerId
+            . ' WHERE Id=' . (int)$trainingId
+    );
+    return $mysqli->affected_rows;
+}
+
+function validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
+{
+    if (!departmentExists($departamentId)) {
+        return INVALID_DEPT;
+    }
+    if (!locationExists($locationId)) {
+        return INVALID_LOC;
+    }
+
+    if (strlen($trainingName) < 2)
+        return INVALID_TRAINING_LEN;
+
+    if (!is_numeric($cost)) {
+        return INVALID_COST_TYPE;
+    } else if ($cost < 1)
+        return INVALID_COST_VALUE;
+
+    if (strlen($trainerName) < 2)
+        return INVALID_TRAINER_LEN;
+
+    if (Date($startDate) >= Date($endDate))
+        return INVALID_DATES;
+
+    return VALIDATION_OK;
 }

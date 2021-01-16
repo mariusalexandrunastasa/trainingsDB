@@ -28,7 +28,7 @@ if (!is_numeric($trainingId)) {
         die();
     }
 } else {
-    updateTraining(
+    $result =  updateTraining(
         $trainingId,
         $trainingName,
         $startDate,
@@ -39,5 +39,11 @@ if (!is_numeric($trainingId)) {
         $trainerName,
         $locationId
     );
+    if ($result != 1) {
+        echo '<p style="color:red">' . $result . '</p>';
+    } else {
+        header("Location: /trainings.php");
+        die();
+    }
 }
-echo '<a href="/create_update.php">Go back!</a>';
+echo '<a href="/trainings.php">Go back!</a>';
