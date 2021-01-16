@@ -4,6 +4,7 @@ require 'db.php';
 function displayTrainingsTable()
 {
     $trainings = getActiveTrainings();
+    echo 'Total Trainings: ' . count($trainings);
     echo ' <table id="trainings">
 <tr>
     <th>Id</th>
