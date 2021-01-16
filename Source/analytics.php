@@ -9,6 +9,11 @@
 
 <body>
     <?php
+    require 'utils/users.php';
+    checkIfUserIsLoggedIn();
+    ?>
+    
+    <?php
     $activePage = $_SERVER['REQUEST_URI'];
     ?>
     <div class="header">

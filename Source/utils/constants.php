@@ -7,4 +7,7 @@ const INVALID_COST_VALUE='Validation Error! Cost must be greater than 1';
 const INVALID_TRAINER_LEN='Validation Error! Trainer name must be at least 3 chars long';
 const INVALID_DATES='Validation Error! Start date must be less than End date';
 const VALIDATION_OK='Ok';
+
+const USER_LOGGED_IN="LoggedIn";
+
 ?>
