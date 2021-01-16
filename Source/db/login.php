@@ -3,17 +3,15 @@ $username = $_POST['username'];
 $password = $_POST['password'];
 
 require 'password.php';
-
-$hash = password_hash($password, PASSWORD_BCRYPT);
-
-if (password_verify($password, $hash)) {
-    echo "Valid";
+require 'db.php';
+$hash = hash('sha512', $password);
+if (logIn($username, $hash) != 1) {
+    header("Location: /login.php");
+    die();
 } else {
-    echo "Invalid";
+    session_start();
+    $_SESSION[USER_LOGGED_IN] = true;
+    echo $_SESSION['page'];
+    header('Location:' . $_SESSION['page']);
+    die();
 }
-?>
-<!-- // CREATE TABLE Users (
-//     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-//     username VARCHAR(50) NOT NULL UNIQUE,
-//     password VARCHAR(255) NOT NULL,
-// ); -->
