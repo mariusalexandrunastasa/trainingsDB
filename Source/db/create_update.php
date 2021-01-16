@@ -46,4 +46,5 @@ if (!is_numeric($trainingId)) {
         die();
     }
 }
+
 echo '<a href="/trainings.php">Go back!</a>';
