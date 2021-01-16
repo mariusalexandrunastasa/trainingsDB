@@ -9,7 +9,7 @@
 
 <body>
   <?php
-  require 'utils/users.php';
+  require_once 'utils/users.php';
   checkIfUserIsLoggedIn();
   ?>
   <?php
@@ -27,8 +27,10 @@
 
   <div class="content">
     <?php
-    require 'db/db_to_html.php';
-    displayTrainingsTable();
+    require_once 'db/db.php';
+    require_once 'db/db_to_html.php';
+    $trainings = getActiveTrainings();
+    displayTrainings($trainings);
     ?>
   </div>
 </body>
