@@ -19,11 +19,11 @@ function logIn($username, $password)
 {
     $mysqli = connect();
     $mysqli->query(
-        'SELECT * FROM Users WHERE '
+        'SELECT * FROM Users WHERE
             . 'username=' . "'$username'"
             . ' AND '
             . 'password=' . "'$password'"
-    );
+    ');
     return $mysqli->num_rows == 1;
 }
 function getActiveTrainings()

@@ -4,11 +4,16 @@ $password = $_POST['password'];
 
 require 'password.php';
 
-echo password_hash($password, PASSWORD_BCRYPT);
-echo phpversion();
+$hash = password_hash($password, PASSWORD_BCRYPT);
 
-// CREATE TABLE Users (
+if (password_verify($password, $hash)) {
+    echo "Valid";
+} else {
+    echo "Invalid";
+}
+?>
+<!-- // CREATE TABLE Users (
 //     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 //     username VARCHAR(50) NOT NULL UNIQUE,
 //     password VARCHAR(255) NOT NULL,
-// );
+// ); -->
