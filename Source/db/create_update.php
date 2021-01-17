@@ -1,13 +1,13 @@
 <?php
-$trainingId = $_POST['trainingId'];
-$trainingName = $_POST['trainingName'];
-$startDate = $_POST['startDate'];
-$endDate = $_POST['endDate'];
-$inviteUrl = $_POST['inviteUrl'];
-$cost = $_POST['cost'];
-$departamentId = $_POST['departament'];
-$trainerName = $_POST['trainerName'];
-$locationId = $_POST['location'];
+$trainingId = $_POST['TrainingId'];
+$trainingName = $_POST['TrainingName'];
+$startDate = $_POST['StartDate'];
+$endDate = $_POST['EndDate'];
+$inviteUrl = $_POST['InviteUrl'];
+$cost = $_POST['Cost'];
+$departamentId = $_POST['Departament'];
+$trainerName = $_POST['TrainerName'];
+$locationId = $_POST['Location'];
 require_once 'db.php';
 
 if (!is_numeric($trainingId)) {

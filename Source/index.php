@@ -2,8 +2,8 @@
 
 <head>
     <title>Training management</title>
-    <link rel="stylesheet" href="table.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 

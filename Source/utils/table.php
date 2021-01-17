@@ -1,6 +1,8 @@
 <div class="content">
     <?php
-    require 'db/db_to_html.php';
-    displayTrainingsTable();
+    require_once 'db/db_to_html.php';
+    require_once 'db/db.php';
+    $trainings = getActiveTrainings();
+    displayTrainings($trainings);
     ?>
 </div>

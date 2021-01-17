@@ -2,14 +2,16 @@
 
 <head>
     <title>Training management</title>
-    <link rel="stylesheet" href="table.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style_forms.css">
 
 </head>
 
 <body>
     <?php
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
     require 'utils/users.php';
     checkIfUserIsLoggedIn();
     ?>
@@ -20,14 +22,15 @@
     <div class="header">
         <a href="/index.php" class="logo">Training Management</a>
         <div class="header-right">
-            <a class="<?= ($activePage == '/index.php' || $activePage == '/') ? 'active' : ''; ?>" href="/index.php">Home</a>
+            <a class="<?= ($activePage == '/index.php' || $activePage == '/') ? 'active' : ''; ?>"
+                href="/index.php">Home</a>
             <a class="<?= ($activePage == '/trainings.php') ? 'active' : ''; ?>" href="/trainings.php">Trainings</a>
             <a class="<?= ($activePage == '/analytics.php') ? 'active' : ''; ?>" href="/analytics.php">Analytics</a>
         </div>
     </div>
 
     <div class="flex">
-        <div class="flex-item">
+        <div class="flex-item-left">
             <form action="analytics.php" method="POST" class="form">
                 <input type="text" name="trainingNames" placeholder="Training Names">
                 <input type="text" name="trainersNames" placeholder="Trainers Names">
@@ -35,7 +38,7 @@
                 <input type="submit" value="Search" />
             </form>
         </div>
-        <div class="flex-item">
+        <div class="flex-item-right">
             <?php
             //include 'utils/table.php';
             require 'utils/filter.php';

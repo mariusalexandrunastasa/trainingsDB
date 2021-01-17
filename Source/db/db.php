@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '../../utils/DTO/training.php';
 
 function connect()
 {
@@ -15,14 +16,15 @@ function connect()
 }
 
 
-function logIn($username, $password)
+function logIn($login)
 {
+
     $mysqli = connect();
     $result = $mysqli->query(
         'SELECT COUNT(*) AS UserCount FROM Users WHERE '
-            . 'username=' . "'$username'"
+            . 'username=' . "'$login->Username'"
             . ' AND '
-            . 'password=' . "'$password'"
+            . 'password=' . "'$login->Password'"
     );
     $row = $result->fetch_assoc();
     return $row['UserCount'];
@@ -61,11 +63,11 @@ function getDepartments()
     Id,Name
     FROM Departments
     ');
-    $rows = [];
+    $departments = [];
     foreach ($result as $row) {
-        $rows[] = $row;
+        $departments[] = new Department($row['Id'], $row['Name']);
     }
-    return $rows;
+    return $departments;
 }
 
 function getLocations()
@@ -75,11 +77,11 @@ function getLocations()
     Id,Name
     From Locations
     ');
-    $rows = [];
+    $locations = [];
     foreach ($result as $row) {
-        $rows[] = $row;
+        $locations[] = new Location($row['Id'], $row['Name']);
     }
-    return $rows;
+    return $locations;
 }
 
 function deleteTraining($id)
@@ -91,23 +93,45 @@ function deleteTraining($id)
 }
 function getTraining($id)
 {
+
     $mysqli = connect();
-    $result = $mysqli->query('SELECT 
+    $query = 'SELECT 
     t.Id as Id,
     TrainingName as TrainingName,
     t.StartDate as StartDate,
     t.EndDate as EndDate,
     t.InviteUrl as InviteUrl,
     t.Cost as Cost,
-    d.Name as Departament,
+    d.Id as DepartamentId,
+    d.Name as DepartamentName,
+    tr.Id as TrainerId,
     tr.Name as TrainerName,
-    l.Name as Location
+    l.Id as LocationId,
+    l.Name as LocationName
     FROM Trainings as t
     INNER JOIN Locations as l on l.Id=t.LocationId
     INNER JOIN Departments as d on d.Id=t.DepartamentId
     INNER JOIN Trainers as tr on tr.Id=t.TrainerId
-    WHERE t.Id=' . $id);
-    return $result->fetch_assoc();
+    WHERE t.Id=' . $id . ' LIMIT 1;';
+    $training = Training::createEmpty();
+    if ($result = $mysqli->query($query)) {
+        $row = $result->fetch_assoc();
+        $training = new Training(
+            $row['Id'],
+            $row['TrainingName'],
+            $row['StartDate'],
+            $row['EndDate'],
+            $row['InviteUrl'],
+            $row['Cost'],
+            new Location($row['LocationId'], $row['LocationName']),
+            new Department($row['DepartamentId'], $row['DepartamentName']),
+            new Trainer($row['TrainerId'], $row['TrainerName'])
+        );
+        $result->close();
+    }
+
+    $mysqli->close();
+    return $training;
 }
 
 function departmentExists($departamentId)
@@ -152,7 +176,7 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
 {
     $validationResult = validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId);
 
-    if ($validationResult != VALIDATION_OK)
+    if ($validationResult != 'VALIDATION_OK')
         return $validationResult;
 
     $trainerId = getTrainerId($trainerName);
@@ -181,12 +205,14 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         . ',' . $trainerId
         . ',' . $locationId
         . ')');
+
+    echo $mysqli->insert_id;
     return $mysqli->insert_id;
 }
 function updateTraining($trainingId, $trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
     $validationResult = validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId);
-    if ($validationResult != VALIDATION_OK)
+    if ($validationResult != 'VALIDATION_OK')
         return $validationResult;
 
     $trainerId = getTrainerId($trainerName);
@@ -212,27 +238,29 @@ function updateTraining($trainingId, $trainingName, $startDate, $endDate, $invit
 
 function validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
+    echo $departamentId, $trainingName, $trainerName;
     if (!departmentExists($departamentId)) {
-        return INVALID_DEPT;
+        return 'INVALID_DEPT';
     }
 
     if (!locationExists($locationId)) {
-        return INVALID_LOC;
+        return 'INVALID_LOC';
     }
 
-    if (strlen($trainingName) < 2)
-        return INVALID_TRAINING_LEN;
+    if (strlen($trainingName) < 2) {
+        return 'INVALID_TRAINING_LEN';
+    }
 
     if (!is_numeric($cost)) {
-        return INVALID_COST_TYPE;
+        return 'INVALID_COST_TYPE';
     } else if ($cost < 1)
-        return INVALID_COST_VALUE;
+        return 'INVALID_COST_VALUE';
 
-    if (strlen($trainerName) < 2)
-        return INVALID_TRAINER_LEN;
-
+    if (strlen($trainerName) < 2) {
+        return 'INVALID_TRAINER_LEN';
+    }
     if (Date($startDate) >= Date($endDate))
-        return INVALID_DATES;
+        return 'INVALID_DATES';
 
-    return VALIDATION_OK;
+    return 'VALIDATION_OK';
 }
