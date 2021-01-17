@@ -1,11 +1,16 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+require_once 'db.php';
+require_once '../utils/DTO/login.php';
+require_once '../utils/constants.php';
+
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-require 'password.php';
-require 'db.php';
-$hash = hash('sha512', $password);
-if (logIn($username, $hash) != 1) {
+$login = new LoginModel($username, $password);
+
+if (logIn($login) != 1) {
     header("Location: /login.php");
     die();
 } else {

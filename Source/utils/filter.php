@@ -2,6 +2,8 @@
 
 include_once 'utils/filters/filterByTrainerName.php';
 include_once 'utils/filters/filterByTrainingName.php';
+require_once 'db/db.php';
+require_once 'db/db_to_html.php';
 
 class FormGroup
 {
@@ -35,8 +37,7 @@ class FormGroup
         return $byTrainerName;
     }
 }
-require_once 'db/db.php';
-require_once 'db/db_to_html.php';
+
 $formGroup = new FormGroup();
 $filter_result = $formGroup->get();
 displayTrainings($filter_result);

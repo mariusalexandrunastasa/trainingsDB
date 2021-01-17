@@ -9,12 +9,14 @@
 
 <body>
     <?php
-  require_once 'utils/users.php';
-  checkIfUserIsLoggedIn();
-  ?>
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    require_once 'utils/users.php';
+    checkIfUserIsLoggedIn();
+    ?>
     <?php
-  $activePage = $_SERVER['REQUEST_URI'];
-  ?>
+    $activePage = $_SERVER['REQUEST_URI'];
+    ?>
     <div class="header">
         <a href="/index.php" class="logo">Training Management</a>
         <div class="header-right">
@@ -28,11 +30,11 @@
 
     <div class="content">
         <?php
-    require_once 'db/db.php';
-    require_once 'db/db_to_html.php';
-    $trainings = getActiveTrainings();
-    displayTrainings($trainings);
-    ?>
+        require_once 'db/db.php';
+        require_once 'db/db_to_html.php';
+        $trainings = getActiveTrainings();
+        displayTrainings($trainings);
+        ?>
     </div>
 </body>
 

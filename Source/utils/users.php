@@ -1,4 +1,6 @@
 <?php
+require_once 'utils/constants.php';
+
 function checkIfUserIsLoggedIn()
 {
     session_start();
