@@ -63,11 +63,11 @@ function getDepartments()
     Id,Name
     FROM Departments
     ');
-    $rows = [];
+    $departments = [];
     foreach ($result as $row) {
-        $rows[] = $row;
+        $departments[] = new Department($row['Id'], $row['Name']);
     }
-    return $rows;
+    return $departments;
 }
 
 function getLocations()
@@ -77,11 +77,11 @@ function getLocations()
     Id,Name
     From Locations
     ');
-    $rows = [];
+    $locations = [];
     foreach ($result as $row) {
-        $rows[] = $row;
+        $locations[] = new Location($row['Id'], $row['Name']);
     }
-    return $rows;
+    return $locations;
 }
 
 function deleteTraining($id)
@@ -176,7 +176,7 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
 {
     $validationResult = validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId);
 
-    if ($validationResult != VALIDATION_OK)
+    if ($validationResult != 'VALIDATION_OK')
         return $validationResult;
 
     $trainerId = getTrainerId($trainerName);
@@ -205,12 +205,14 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         . ',' . $trainerId
         . ',' . $locationId
         . ')');
+
+    echo $mysqli->insert_id;
     return $mysqli->insert_id;
 }
 function updateTraining($trainingId, $trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
     $validationResult = validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId);
-    if ($validationResult != VALIDATION_OK)
+    if ($validationResult != 'VALIDATION_OK')
         return $validationResult;
 
     $trainerId = getTrainerId($trainerName);
@@ -236,27 +238,29 @@ function updateTraining($trainingId, $trainingName, $startDate, $endDate, $invit
 
 function validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
+    echo $departamentId, $trainingName, $trainerName;
     if (!departmentExists($departamentId)) {
-        return INVALID_DEPT;
+        return 'INVALID_DEPT';
     }
 
     if (!locationExists($locationId)) {
-        return INVALID_LOC;
+        return 'INVALID_LOC';
     }
 
-    if (strlen($trainingName) < 2)
-        return INVALID_TRAINING_LEN;
+    if (strlen($trainingName) < 2) {
+        return 'INVALID_TRAINING_LEN';
+    }
 
     if (!is_numeric($cost)) {
-        return INVALID_COST_TYPE;
+        return 'INVALID_COST_TYPE';
     } else if ($cost < 1)
-        return INVALID_COST_VALUE;
+        return 'INVALID_COST_VALUE';
 
-    if (strlen($trainerName) < 2)
-        return INVALID_TRAINER_LEN;
-
+    if (strlen($trainerName) < 2) {
+        return 'INVALID_TRAINER_LEN';
+    }
     if (Date($startDate) >= Date($endDate))
-        return INVALID_DATES;
+        return 'INVALID_DATES';
 
-    return VALIDATION_OK;
+    return 'VALIDATION_OK';
 }
