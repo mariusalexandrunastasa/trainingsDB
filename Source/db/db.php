@@ -6,7 +6,7 @@ function connect()
     $host = 'localhost';
     $user = 'root';
     $pass = 'masterrc';
-    $db = 'trainingDB';
+    $db = 'TrainingDB';
 
     $mysqli = new mysqli($host, $user, $pass, $db);
     if ($mysqli->connect_error) {
