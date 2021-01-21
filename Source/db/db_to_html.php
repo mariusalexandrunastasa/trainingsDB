@@ -52,33 +52,30 @@ function displayTrainingsWithParticipants($trainings)
     }
     echo ' <table id="trainings">
 <tr>
-    <th>Id</th>
     <th>Training Name</th>
-    <th>Start Date</th>    
-    <th>End Date</th>
-    <th>Invite Url</th>
-    <th>Cost</th>
-    <th>Departament</th>
-    <th>Trainer</th>
+    <th>Trainer</th>    
+    <th>Trainee</th>
+    <th>Trainee Status</th>
+    <th>Discipline</th>
+    <th>Start</th>
+    <th>End</th>
     <th>Location</th>
-    <th>Actions</th>
 
 </tr>';
     foreach ($trainings as $training) {
-        echo '<tr>';
-        echo '<td>' .  $training['Id'] . '</td>';
-        echo '<td>' .  $training['TrainingName'] . '</td>';
-        echo '<td>' .  $training['StartDate'] . '</td>';
-        echo '<td>' .  $training['EndDate'] . '</td>';
-        echo '<td>' .  $training['InviteUrl'] . '</td>';
-        echo '<td>' .  $training['Cost'] . '</td>';
-        echo '<td>' .  $training['Departament'] . '</td>';
-        echo '<td>' .  $training['TrainerName'] . '</td>';
-        echo '<td>' .  $training['Location'] . '</td>';
-        echo '<td>' . '<a class="action-button" href=db/delete.php?Id=' . $training['Id'] . '>Delete</a>' .
-            '<a class="action-button" href=create_update.php?Id=' . $training['Id']  . '>Edit</a>'
-            . '</td>';
-        echo '</tr>';
+        foreach ($training->TrainingParticipants as $tp) {
+            echo '<tr>';
+            echo '<td>' .  $training->TrainingName . '</td>';
+            echo '<td>' .  $training->Trainer->Name . '</td>';
+            echo '<td>' .  $tp->Participant->Name . '</td>';
+            echo '<td>' .  $tp->IsInvited . '</td>';
+            echo '<td>' .  $training->Department->Name . '</td>';
+            echo '<td>' .  $training->StartDate . '</td>';
+            echo '<td>' .  $training->EndDate . '</td>';
+            echo '<td>' .  $training->Location->Name . '</td>';
+
+            echo '</tr>';
+        }
     }
 
     echo '</table>';

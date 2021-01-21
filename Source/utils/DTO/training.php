@@ -40,11 +40,9 @@ class Department extends BaseObject
 }
 class Participant extends BaseObject
 {
-    public $JobTitle;
-    public function __construct($id, $name, $jobTitle)
+    public function __construct($id, $name)
     {
         parent::__construct($id, $name);
-        $this->JobTitle = $jobTitle;
     }
 }
 
@@ -72,7 +70,7 @@ class Training
     public $Location;
     public $Department;
     public $Trainer;
-    public $TrainingParticipants;
+    public $TrainingParticipant;
 
     public function __construct(
         $Id,

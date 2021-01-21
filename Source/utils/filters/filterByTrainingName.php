@@ -13,7 +13,7 @@ class FilterByTrainingName
         if (empty($this->names))
             return true;
         foreach ($this->names as $item) {
-            if (stripos($training['TrainingName'], $item) !== false) {
+            if (stripos($training->TrainingName, $item) !== false) {
                 return true;
             }
         }

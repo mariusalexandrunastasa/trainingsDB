@@ -65,9 +65,13 @@ function getActiveTrainingsWithParticipants()
     t.EndDate as EndDate,
     t.InviteUrl as InviteUrl,
     t.Cost as Cost,
-    d.Name as Departament,
+    d.Id as DepartamentId,
+    d.Name as DepartamentName,
+    tr.Id as TrainerId,
     tr.Name as TrainerName,
-    l.Name as Location,
+    l.Id as LocationId,
+    l.Name as LocationName,
+    p.Id as ParticipantId,
     p.Name as ParticipantName,
     tp.IsInvited as IsInvited
     FROM Trainings as t
@@ -78,10 +82,47 @@ function getActiveTrainingsWithParticipants()
     INNER JOIN Participants as p ON p.Id=tp.ParticipantId
     WHERE t.IsDeleted=false
     ');
-    $rows = [];
+    $arr = array();
     foreach ($result as $row) {
-        $rows[] = $row;
+        $trId = $row['Id'];
+        if (isset($arr[$trId])) {
+            $training = $arr[$trId];
+            $training->TrainingParticipants[] = new TrainingParticipant(
+                new Participant(
+                    $row['ParticipantId'],
+                    $row['ParticipantName']
+                ),
+                $trId,
+                $row['IsInvited']
+            );
+        } else {
+            $arr[$trId] =  new Training(
+                $trId,
+                $row['TrainingName'],
+                $row['StartDate'],
+                $row['EndDate'],
+                $row['InviteUrl'],
+                $row['Cost'],
+                new Location($row['LocationId'], $row['LocationName']),
+                new Department($row['DepartamentId'], $row['DepartamentName']),
+                new Trainer($row['TrainerId'], $row['TrainerName']),
+                array(
+                    new TrainingParticipant(
+                        new Participant(
+                            $row['ParticipantId'],
+                            $row['ParticipantName']
+                        ),
+                        $trId,
+                        $row['IsInvited']
+                    )
+                )
+            );
+        }
     }
+    $rows = [];
+
+    foreach ($arr as $tr)
+        $rows[] = $tr;
     return $rows;
 }
 
@@ -123,7 +164,6 @@ function deleteTraining($id)
 }
 function getTraining($id)
 {
-
     $mysqli = connect();
     $query = 'SELECT 
     t.Id as Id,
