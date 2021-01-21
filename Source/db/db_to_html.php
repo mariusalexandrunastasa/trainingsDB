@@ -62,13 +62,15 @@ function displayTrainingsWithParticipants($trainings)
     <th>Location</th>
 
 </tr>';
+    
     foreach ($trainings as $training) {
         foreach ($training->TrainingParticipants as $tp) {
+            $isInvitedOut = $tp->IsInvited == 0 ? "Not Invited" : "Invited";
             echo '<tr>';
             echo '<td>' .  $training->TrainingName . '</td>';
             echo '<td>' .  $training->Trainer->Name . '</td>';
             echo '<td>' .  $tp->Participant->Name . '</td>';
-            echo '<td>' .  $tp->IsInvited . '</td>';
+            echo '<td>' .  $isInvitedOut. '</td>';
             echo '<td>' .  $training->Department->Name . '</td>';
             echo '<td>' .  $training->StartDate . '</td>';
             echo '<td>' .  $training->EndDate . '</td>';

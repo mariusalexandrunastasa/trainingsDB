@@ -16,7 +16,6 @@ if (logIn($login) != 1) {
 } else {
     session_start();
     $_SESSION[USER_LOGGED_IN] = true;
-    echo $_SESSION['page'];
     header('Location:' . $_SESSION['page']);
     die();
 }

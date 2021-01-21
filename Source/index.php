@@ -4,7 +4,6 @@
     <title>Training management</title>
     <link rel="stylesheet" href="css/table.css">
     <link rel="stylesheet" href="css/style.css">
-
 </head>
 
 <body>
@@ -24,10 +23,11 @@
             <a class="<?= ($activePage == '/index.php' || $activePage == '/') ? 'active' : ''; ?>" href="/index.php">Home</a>
             <a class="<?= ($activePage == '/trainings.php') ? 'active' : ''; ?>" href="/trainings.php">Trainings</a>
             <a class="<?= ($activePage == '/analytics.php') ? 'active' : ''; ?>" href="/analytics.php">Analytics</a>
+            <a href="/logout.php">Logout</a>
         </div>
     </div>
 
-
+    <img src="utils/images/banner.jpg" alt="home image">
 </body>
 
 </html>
