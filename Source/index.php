@@ -11,6 +11,12 @@
     <?php
     $activePage = $_SERVER['REQUEST_URI'];
     ?>
+    <?php
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    require_once 'utils/users.php';
+    checkIfUserIsLoggedIn();
+    ?>
 
     <div class="header">
         <a href="/index.php" class="logo">Training Management</a>
