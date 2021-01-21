@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '../../utils/DTO/training.php';
-
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 function connect()
 {
     $host = 'localhost';
@@ -47,11 +48,84 @@ function getActiveTrainings()
     INNER JOIN Departments as d on d.Id=t.DepartamentId
     INNER JOIN Trainers as tr on tr.Id=t.TrainerId
     WHERE t.IsDeleted=false
+    ORDER BY t.Id desc
     ');
     $rows = [];
     foreach ($result as $row) {
         $rows[] = $row;
     }
+    return $rows;
+}
+
+function getActiveTrainingsWithParticipants()
+{
+    $mysqli = connect();
+    $result = $mysqli->query('SELECT 
+    t.Id as Id,
+    TrainingName as TrainingName,
+    t.StartDate as StartDate,
+    t.EndDate as EndDate,
+    t.InviteUrl as InviteUrl,
+    t.Cost as Cost,
+    d.Id as DepartamentId,
+    d.Name as DepartamentName,
+    tr.Id as TrainerId,
+    tr.Name as TrainerName,
+    l.Id as LocationId,
+    l.Name as LocationName,
+    p.Id as ParticipantId,
+    p.Name as ParticipantName,
+    tp.IsInvited as IsInvited
+    FROM Trainings as t
+    INNER JOIN Locations as l on l.Id=t.LocationId
+    INNER JOIN Departments as d on d.Id=t.DepartamentId
+    INNER JOIN Trainers as tr on tr.Id=t.TrainerId
+    INNER JOIN TrainingParticipants as tp on t.Id=tp.TrainingId
+    INNER JOIN Participants as p ON p.Id=tp.ParticipantId
+    WHERE t.IsDeleted=false
+    ORDER BY t.Id desc
+    ');
+    $arr = array();
+    foreach ($result as $row) {
+        $trId = $row['Id'];
+        if (isset($arr[$trId])) {
+            $training = $arr[$trId];
+            $training->TrainingParticipants[] = new TrainingParticipant(
+                new Participant(
+                    $row['ParticipantId'],
+                    $row['ParticipantName']
+                ),
+                $trId,
+                $row['IsInvited']
+            );
+        } else {
+            $arr[$trId] =  new Training(
+                $trId,
+                $row['TrainingName'],
+                $row['StartDate'],
+                $row['EndDate'],
+                $row['InviteUrl'],
+                $row['Cost'],
+                new Location($row['LocationId'], $row['LocationName']),
+                new Department($row['DepartamentId'], $row['DepartamentName']),
+                new Trainer($row['TrainerId'], $row['TrainerName']),
+                array(
+                    new TrainingParticipant(
+                        new Participant(
+                            $row['ParticipantId'],
+                            $row['ParticipantName']
+                        ),
+                        $trId,
+                        $row['IsInvited']
+                    )
+                )
+            );
+        }
+    }
+    $rows = [];
+
+    foreach ($arr as $tr)
+        $rows[] = $tr;
     return $rows;
 }
 
@@ -93,7 +167,6 @@ function deleteTraining($id)
 }
 function getTraining($id)
 {
-
     $mysqli = connect();
     $query = 'SELECT 
     t.Id as Id,
@@ -125,7 +198,8 @@ function getTraining($id)
             $row['Cost'],
             new Location($row['LocationId'], $row['LocationName']),
             new Department($row['DepartamentId'], $row['DepartamentName']),
-            new Trainer($row['TrainerId'], $row['TrainerName'])
+            new Trainer($row['TrainerId'], $row['TrainerName']),
+            null
         );
         $result->close();
     }
@@ -152,7 +226,13 @@ function locationExists($locationId)
     From Locations
     WHERE Id=' . $locationId . '
     ');
-    return $result->num_rows == 1;
+    echo 'SELECT
+    Id
+    From Locations
+    WHERE Id=' . $locationId . '
+    ';
+    echo ' locations: ' . $locationId . '-' . $result->num_rows;
+    return $result->num_rows >= 1;
 }
 
 function getTrainerId($trainerName)
@@ -172,7 +252,7 @@ function createTrainer($trainerName)
     $mysqli->query('INSERT INTO Trainers(Name) VALUES ("' . $trainerName . '")');
     return $mysqli->insert_id;
 }
-function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
+function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId, $participants)
 {
     $validationResult = validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId);
 
@@ -185,6 +265,12 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         $trainerId =  createTrainer($trainerName);
     }
 
+    $participants = array_map('trim', explode(',', $participants));
+
+    $startDate = (new DateTime($startDate))->format('Y-m-d H:i:s');
+    $endDate = (new DateTime($endDate))->format('Y-m-d H:i:s');
+
+    //insert training
     $mysqli = connect();
     $mysqli->query('INSERT INTO Trainings(
         TrainingName,
@@ -197,8 +283,8 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         LocationId) 
     VALUES (
         "' . $trainingName
-        . '",' . "'  $startDate  '"
-        . ',' .  "'  $endDate  '"
+        . '",' . "'$startDate'"
+        . ',' . "'$endDate'"
         . ',"' . $inviteUrl
         . '",' . $cost
         . ',' . $departamentId
@@ -206,8 +292,35 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         . ',' . $locationId
         . ')');
 
-    echo $mysqli->insert_id;
-    return $mysqli->insert_id;
+    $trainingId = $mysqli->insert_id;
+
+    //insert participants, bulk insert;
+    $query = ' INSERT INTO Participants(Name) VALUES ';
+    $arr = array();
+    foreach ($participants as $participant)
+        $arr[] = "('" . $participant . "')";
+    $query .= implode(', ', $arr);
+
+    $mysqli->query($query);
+    $id = $mysqli->insert_id;
+    $ids = [$id];
+    if ($id && $mysqli->affected_rows > 1) {
+        for ($i = 0; $i < $mysqli->affected_rows - 1; $i++) {
+            $ids[] = $id + 1;
+            $id++;
+        }
+    }
+    // insert into many to many ,bulk insert
+
+    $query = 'INSERT INTO TrainingParticipants(TrainingId,ParticipantId,IsInvited) VALUES ';
+    $arr = array();
+    foreach ($ids as $pId)
+        $arr[] = '(' . $trainingId . ', ' . $pId . ', ' . 0 . ')';
+
+    $query .= implode(', ', $arr);
+    $mysqli->query($query);
+
+    return true;
 }
 function updateTraining($trainingId, $trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
@@ -238,7 +351,6 @@ function updateTraining($trainingId, $trainingName, $startDate, $endDate, $invit
 
 function validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
-    echo $departamentId, $trainingName, $trainerName;
     if (!departmentExists($departamentId)) {
         return 'INVALID_DEPT';
     }

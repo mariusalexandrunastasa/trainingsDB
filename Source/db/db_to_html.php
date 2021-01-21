@@ -41,3 +41,42 @@ function displayTrainings($trainings)
 
     echo '</table>';
 }
+
+
+function displayTrainingsWithParticipants($trainings)
+{
+    echo '<div>Total Trainings: ' . count($trainings) . '</div>';
+    if (count($trainings) == 0) {
+        echo "<br>Did not find any trainigs";
+        return;
+    }
+    echo ' <table id="trainings">
+<tr>
+    <th>Training Name</th>
+    <th>Trainer</th>    
+    <th>Trainee</th>
+    <th>Trainee Status</th>
+    <th>Discipline</th>
+    <th>Start</th>
+    <th>End</th>
+    <th>Location</th>
+
+</tr>';
+    foreach ($trainings as $training) {
+        foreach ($training->TrainingParticipants as $tp) {
+            echo '<tr>';
+            echo '<td>' .  $training->TrainingName . '</td>';
+            echo '<td>' .  $training->Trainer->Name . '</td>';
+            echo '<td>' .  $tp->Participant->Name . '</td>';
+            echo '<td>' .  $tp->IsInvited . '</td>';
+            echo '<td>' .  $training->Department->Name . '</td>';
+            echo '<td>' .  $training->StartDate . '</td>';
+            echo '<td>' .  $training->EndDate . '</td>';
+            echo '<td>' .  $training->Location->Name . '</td>';
+
+            echo '</tr>';
+        }
+    }
+
+    echo '</table>';
+}

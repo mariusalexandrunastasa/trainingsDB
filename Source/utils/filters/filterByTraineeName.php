@@ -1,5 +1,5 @@
 <?php
-class FilterByTrainerName
+class FilterByTraineeName
 {
     private $names;
 
@@ -14,8 +14,10 @@ class FilterByTrainerName
             return true;
 
         foreach ($this->names as $item) {
-            if (stripos($training->Trainer->Name, $item) !== false) {
-                return true;
+            foreach ($training->TrainingParticipants as $tps) {
+                if (stripos($tps->Participant->Name, $item) !== false) {
+                    return true;
+                }
             }
         }
         return false;

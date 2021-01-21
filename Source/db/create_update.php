@@ -8,9 +8,10 @@ $cost = $_POST['Cost'];
 $departamentId = $_POST['Departament'];
 $trainerName = $_POST['TrainerName'];
 $locationId = $_POST['Location'];
+$participants = $_POST['Participants'];
 require_once 'db.php';
 
-if (!is_numeric($trainingId)) {
+if (!is_numeric($trainingId) || $trainingId == 0) {
     $result = createTraining(
         $trainingName,
         $startDate,
@@ -19,9 +20,10 @@ if (!is_numeric($trainingId)) {
         $cost,
         $departamentId,
         $trainerName,
-        $locationId
+        $locationId,
+        $participants
     );
-    if ($result < 1)
+    if (!$result)
         echo '<p style="color:red">' . $result . '</p>';
     else {
         header("Location: /trainings.php");
@@ -40,6 +42,7 @@ if (!is_numeric($trainingId)) {
         $locationId
     );
     if ($result != 1) {
+        echo 'update ' . $trainingId;
         echo '<p style="color:red">' . $result . '</p>';
     } else {
         header("Location: /trainings.php");

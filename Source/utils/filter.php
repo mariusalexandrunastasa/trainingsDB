@@ -2,6 +2,8 @@
 
 include_once 'utils/filters/filterByTrainerName.php';
 include_once 'utils/filters/filterByTrainingName.php';
+include_once 'utils/filters/filterByTraineeName.php';
+
 require_once 'db/db.php';
 require_once 'db/db_to_html.php';
 
@@ -9,6 +11,8 @@ class FormGroup
 {
     private $trainingNames;
     private $trainerNames;
+    private $traineeNames;
+
 
     private $trainings;
 
@@ -23,21 +27,22 @@ class FormGroup
         if ($this->trainerNames != null)
             $this->trainerNames = array_map('trim', explode(',',  $this->trainerNames));
 
-        foreach ($this->trainerNames as $item) {
-            echo $item;
-        }
+        $this->traineeNames = isset($_POST['traineeNames']) ? $_POST['traineeNames'] : array();
+        if ($this->traineeNames != null)
+            $this->traineeNames = array_map('trim', explode(',',  $this->traineeNames));
     }
 
     function get()
     {
-        $this->trainings = getActiveTrainings();
+        $this->trainings = getActiveTrainingsWithParticipants();
         $byTrainigName = array_filter($this->trainings, array(new FilterByTrainingName($this->trainingNames), 'isOk'));
         $byTrainerName = array_filter($byTrainigName, array(new FilterByTrainerName($this->trainerNames), 'isOk'));
+        $byTraineeName = array_filter($byTrainerName, array(new FilterByTraineeName($this->traineeNames), 'isOk'));
 
-        return $byTrainerName;
+        return $byTraineeName;
     }
 }
 
 $formGroup = new FormGroup();
 $filter_result = $formGroup->get();
-displayTrainings($filter_result);
+displayTrainingsWithParticipants($filter_result);
