@@ -70,7 +70,7 @@ class Training
     public $Location;
     public $Department;
     public $Trainer;
-    public $TrainingParticipant;
+    public $TrainingParticipants;
 
     public function __construct(
         $Id,

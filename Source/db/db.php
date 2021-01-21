@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '../../utils/DTO/training.php';
-
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 function connect()
 {
     $host = 'localhost';
@@ -47,6 +48,7 @@ function getActiveTrainings()
     INNER JOIN Departments as d on d.Id=t.DepartamentId
     INNER JOIN Trainers as tr on tr.Id=t.TrainerId
     WHERE t.IsDeleted=false
+    ORDER BY t.Id desc
     ');
     $rows = [];
     foreach ($result as $row) {
@@ -81,6 +83,7 @@ function getActiveTrainingsWithParticipants()
     INNER JOIN TrainingParticipants as tp on t.Id=tp.TrainingId
     INNER JOIN Participants as p ON p.Id=tp.ParticipantId
     WHERE t.IsDeleted=false
+    ORDER BY t.Id desc
     ');
     $arr = array();
     foreach ($result as $row) {
@@ -223,7 +226,13 @@ function locationExists($locationId)
     From Locations
     WHERE Id=' . $locationId . '
     ');
-    return $result->num_rows == 1;
+    echo 'SELECT
+    Id
+    From Locations
+    WHERE Id=' . $locationId . '
+    ';
+    echo ' locations: ' . $locationId . '-' . $result->num_rows;
+    return $result->num_rows >= 1;
 }
 
 function getTrainerId($trainerName)
@@ -243,7 +252,7 @@ function createTrainer($trainerName)
     $mysqli->query('INSERT INTO Trainers(Name) VALUES ("' . $trainerName . '")');
     return $mysqli->insert_id;
 }
-function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
+function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId, $participants)
 {
     $validationResult = validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId);
 
@@ -256,6 +265,12 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         $trainerId =  createTrainer($trainerName);
     }
 
+    $participants = array_map('trim', explode(',', $participants));
+
+    $startDate = (new DateTime($startDate))->format('Y-m-d H:i:s');
+    $endDate = (new DateTime($endDate))->format('Y-m-d H:i:s');
+
+    //insert training
     $mysqli = connect();
     $mysqli->query('INSERT INTO Trainings(
         TrainingName,
@@ -268,8 +283,8 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         LocationId) 
     VALUES (
         "' . $trainingName
-        . '",' . "'  $startDate  '"
-        . ',' .  "'  $endDate  '"
+        . '",' . "'$startDate'"
+        . ',' . "'$endDate'"
         . ',"' . $inviteUrl
         . '",' . $cost
         . ',' . $departamentId
@@ -277,7 +292,35 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         . ',' . $locationId
         . ')');
 
-    return $mysqli->insert_id;
+    $trainingId = $mysqli->insert_id;
+
+    //insert participants, bulk insert;
+    $query = ' INSERT INTO Participants(Name) VALUES ';
+    $arr = array();
+    foreach ($participants as $participant)
+        $arr[] = "('" . $participant . "')";
+    $query .= implode(', ', $arr);
+
+    $mysqli->query($query);
+    $id = $mysqli->insert_id;
+    $ids = [$id];
+    if ($id && $mysqli->affected_rows > 1) {
+        for ($i = 0; $i < $mysqli->affected_rows - 1; $i++) {
+            $ids[] = $id + 1;
+            $id++;
+        }
+    }
+    // insert into many to many ,bulk insert
+
+    $query = 'INSERT INTO TrainingParticipants(TrainingId,ParticipantId,IsInvited) VALUES ';
+    $arr = array();
+    foreach ($ids as $pId)
+        $arr[] = '(' . $trainingId . ', ' . $pId . ', ' . 0 . ')';
+
+    $query .= implode(', ', $arr);
+    $mysqli->query($query);
+
+    return true;
 }
 function updateTraining($trainingId, $trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
@@ -308,7 +351,6 @@ function updateTraining($trainingId, $trainingName, $startDate, $endDate, $invit
 
 function validateTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)
 {
-    echo $departamentId, $trainingName, $trainerName;
     if (!departmentExists($departamentId)) {
         return 'INVALID_DEPT';
     }

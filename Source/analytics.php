@@ -28,15 +28,20 @@
         </div>
     </div>
     <div class="flex">
-        <p class="head">All trainings and participants</p> 
+        <p class="head">All trainings and participants</p>
         <button class="button" onclick="toggleFilter()">Filter</button>
+        <form action="utils/download.php" method="POST" class="form">
+            <input type="hidden" name="trainingNames">
+            <input type="submit" value="Download" />
+        </form>
     </div>
     <div class="flex">
 
         <div class="flex-item-left" id="filter-form">
             <form action="analytics.php" method="POST" class="form">
-                <input type="text" name="trainingNames" placeholder="Training Names">
-                <input type="text" name="trainersNames" placeholder="Trainers Names">
+                <input type="text" name="trainingNames" placeholder="Training Names( splitted by ,)">
+                <input type="text" name="trainersNames" placeholder="Trainers Names( splitted by ,)">
+                <input type="text" name="traineeNames" placeholder="Trainee Names ( splitted by ,)">
 
                 <input type="submit" value="Search" />
             </form>

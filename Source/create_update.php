@@ -57,7 +57,8 @@
 
         <label>TrainerName</label>
         <input type="text" id="TrainerName" name="TrainerName" placeholder="TrainerName" value=<?php echo '"' . $training->Trainer->Name . '"' ?>>
-
+        <label>Participants</label>
+        <textarea type="text" id="Participants" name="Participants" placeholder="Participants splitted by ," value='' rows="5"></textarea>
         <label>Location</label>
         <select name="Location">
             <?php

@@ -71,7 +71,8 @@ select {
     box-sizing: border-box;
 }
 
-input[type=submit] {
+input[type=submit],
+textareas {
     width: 100%;
     background-color: #4CAF50;
     color: white;
@@ -103,7 +104,8 @@ form {
 /* Full-width inputs */
 
 input[type=text],
-input[type=password] {
+input[type=password],
+textarea {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
