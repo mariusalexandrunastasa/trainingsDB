@@ -37,6 +37,11 @@
     cursor: pointer;
     text-decoration: none;
 }
+
+.button:hover{
+    background-color: #00a2ff;
+}
+
 .head {
     display: inline-block;
 }
