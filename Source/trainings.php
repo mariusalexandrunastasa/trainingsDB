@@ -4,6 +4,7 @@
     <title>Training management</title>
     <link rel="stylesheet" href="css/table.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style_forms.css">
 
 </head>
 
@@ -26,7 +27,7 @@
             <a class="<?= ($activePage == '/analytics.php') ? 'active' : ''; ?>" href="/analytics.php">Analytics</a>
         </div>
     </div>
-    <a href="create_update.php" class="button">Create new Training</a>
+    <div><a href="create_update.php" class="button">Create new Training</a></div>
 
     <div class="content">
         <?php

@@ -1,4 +1,8 @@
 <?php
+$array = array(
+   "foo" => "bar",
+   "bar" => "foo",
+);
 function array2csv(array &$array)
 {
    if (count($array) == 0) {
