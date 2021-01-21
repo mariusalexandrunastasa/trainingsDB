@@ -22,15 +22,18 @@
     <div class="header">
         <a href="/index.php" class="logo">Training Management</a>
         <div class="header-right">
-            <a class="<?= ($activePage == '/index.php' || $activePage == '/') ? 'active' : ''; ?>"
-                href="/index.php">Home</a>
+            <a class="<?= ($activePage == '/index.php' || $activePage == '/') ? 'active' : ''; ?>" href="/index.php">Home</a>
             <a class="<?= ($activePage == '/trainings.php') ? 'active' : ''; ?>" href="/trainings.php">Trainings</a>
             <a class="<?= ($activePage == '/analytics.php') ? 'active' : ''; ?>" href="/analytics.php">Analytics</a>
         </div>
     </div>
-
     <div class="flex">
-        <div class="flex-item-left">
+        <p class="head">All trainings and participants</p> 
+        <button class="button" onclick="toggleFilter()">Filter</button>
+    </div>
+    <div class="flex">
+
+        <div class="flex-item-left" id="filter-form">
             <form action="analytics.php" method="POST" class="form">
                 <input type="text" name="trainingNames" placeholder="Training Names">
                 <input type="text" name="trainersNames" placeholder="Trainers Names">
@@ -38,15 +41,17 @@
                 <input type="submit" value="Search" />
             </form>
         </div>
-        <div class="flex-item-right">
+        <div class="flex-item-right" id="display-table">
+
             <?php
-            //include 'utils/table.php';
             require 'utils/filter.php';
 
             ?>
         </div>
 
     </div>
+    <script type="text/javascript" src="utils/scripts/toggle.js"></script>
+
 </body>
 
 </html>

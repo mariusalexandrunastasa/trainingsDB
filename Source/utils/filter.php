@@ -22,15 +22,11 @@ class FormGroup
         $this->trainerNames = isset($_POST['trainersNames']) ? $_POST['trainersNames'] : array();
         if ($this->trainerNames != null)
             $this->trainerNames = array_map('trim', explode(',',  $this->trainerNames));
-
-        foreach ($this->trainerNames as $item) {
-            echo $item;
-        }
     }
 
     function get()
     {
-        $this->trainings = getActiveTrainings();
+        $this->trainings = getActiveTrainingsWithParticipants();
         $byTrainigName = array_filter($this->trainings, array(new FilterByTrainingName($this->trainingNames), 'isOk'));
         $byTrainerName = array_filter($byTrainigName, array(new FilterByTrainerName($this->trainerNames), 'isOk'));
 
@@ -40,4 +36,4 @@ class FormGroup
 
 $formGroup = new FormGroup();
 $filter_result = $formGroup->get();
-displayTrainings($filter_result);
+displayTrainingsWithParticipants($filter_result);

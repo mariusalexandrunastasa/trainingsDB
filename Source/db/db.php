@@ -55,6 +55,36 @@ function getActiveTrainings()
     return $rows;
 }
 
+function getActiveTrainingsWithParticipants()
+{
+    $mysqli = connect();
+    $result = $mysqli->query('SELECT 
+    t.Id as Id,
+    TrainingName as TrainingName,
+    t.StartDate as StartDate,
+    t.EndDate as EndDate,
+    t.InviteUrl as InviteUrl,
+    t.Cost as Cost,
+    d.Name as Departament,
+    tr.Name as TrainerName,
+    l.Name as Location,
+    p.Name as ParticipantName,
+    tp.IsInvited as IsInvited
+    FROM Trainings as t
+    INNER JOIN Locations as l on l.Id=t.LocationId
+    INNER JOIN Departments as d on d.Id=t.DepartamentId
+    INNER JOIN Trainers as tr on tr.Id=t.TrainerId
+    INNER JOIN TrainingParticipants as tp on t.Id=tp.TrainingId
+    INNER JOIN Participants as p ON p.Id=tp.ParticipantId
+    WHERE t.IsDeleted=false
+    ');
+    $rows = [];
+    foreach ($result as $row) {
+        $rows[] = $row;
+    }
+    return $rows;
+}
+
 function getDepartments()
 {
     $mysqli = connect();
@@ -125,7 +155,8 @@ function getTraining($id)
             $row['Cost'],
             new Location($row['LocationId'], $row['LocationName']),
             new Department($row['DepartamentId'], $row['DepartamentName']),
-            new Trainer($row['TrainerId'], $row['TrainerName'])
+            new Trainer($row['TrainerId'], $row['TrainerName']),
+            null
         );
         $result->close();
     }
@@ -206,7 +237,6 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
         . ',' . $locationId
         . ')');
 
-    echo $mysqli->insert_id;
     return $mysqli->insert_id;
 }
 function updateTraining($trainingId, $trainingName, $startDate, $endDate, $inviteUrl, $cost, $departamentId, $trainerName, $locationId)

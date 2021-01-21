@@ -38,6 +38,29 @@ class Department extends BaseObject
         parent::__construct($id, $name);
     }
 }
+class Participant extends BaseObject
+{
+    public $JobTitle;
+    public function __construct($id, $name, $jobTitle)
+    {
+        parent::__construct($id, $name);
+        $this->JobTitle = $jobTitle;
+    }
+}
+
+class TrainingParticipant
+{
+    public $Participant;
+    public $TrainingId;
+    public $IsInvited;
+
+    public function __construct($participant, $trainingId, $IsInvited)
+    {
+        $this->Participant = $participant;
+        $this->TrainingId = $trainingId;
+        $this->IsInvited = $IsInvited;
+    }
+}
 class Training
 {
     public $Id;
@@ -49,6 +72,7 @@ class Training
     public $Location;
     public $Department;
     public $Trainer;
+    public $TrainingParticipants;
 
     public function __construct(
         $Id,
@@ -59,7 +83,8 @@ class Training
         $Cost,
         $Location,
         $Department,
-        $Trainer
+        $Trainer,
+        $TrainingParticipants
     ) {
         $this->Id = $Id;
         $this->TrainingName = $TrainingName;
@@ -70,6 +95,7 @@ class Training
         $this->Location = $Location;
         $this->Department = $Department;
         $this->Trainer = $Trainer;
+        $this->TrainingParticipants = $TrainingParticipants;
     }
     public static function createEmpty()
     {
@@ -82,7 +108,8 @@ class Training
             0,
             Location::createEmpty(),
             Department::createEmpty(),
-            Trainer::createEmpty()
+            Trainer::createEmpty(),
+            array()
         );
     }
 }
