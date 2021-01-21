@@ -25,6 +25,7 @@
                 href="/index.php">Home</a>
             <a class="<?= ($activePage == '/trainings.php') ? 'active' : ''; ?>" href="/trainings.php">Trainings</a>
             <a class="<?= ($activePage == '/analytics.php') ? 'active' : ''; ?>" href="/analytics.php">Analytics</a>
+            <a href="/logout.php">Logout</a>
         </div>
     </div>
     <div><a href="create_update.php" class="button">Create new Training</a></div>
