@@ -1,22 +1,6 @@
 <?php
-$array = array(
-   "foo" => "bar",
-   "bar" => "foo",
-);
-function array2csv(array &$array)
-{
-   if (count($array) == 0) {
-     return null;
-   }
-   ob_start();
-   $df = fopen("php://output", 'w');
-   fputcsv($df, array_keys(reset($array)));
-   foreach ($array as $row) {
-      fputcsv($df, $row);
-   }
-   fclose($df);
-   return ob_get_clean();
-}
+
+//empty for now
 function download_send_headers($filename) {
     // disable caching
     $now = gmdate("D, d M Y H:i:s");
@@ -33,6 +17,5 @@ function download_send_headers($filename) {
     header("Content-Disposition: attachment;filename={$filename}");
     header("Content-Transfer-Encoding: binary");
 }
-download_send_headers("data_export_" . date("Y-m-d") . ".csv");
-echo array2csv($array);
+download_send_headers("IoanTugui-DWPI.csv");
 die();

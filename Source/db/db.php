@@ -2,12 +2,13 @@
 require_once __DIR__ . '../../utils/DTO/training.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 function connect()
 {
     $host = 'localhost';
     $user = 'root';
     $pass = 'masterrc';
-    $db = 'TrainingDB';
+    $db = 'trainingDB';
 
     $mysqli = new mysqli($host, $user, $pass, $db);
     if ($mysqli->connect_error) {
@@ -19,7 +20,6 @@ function connect()
 
 function logIn($login)
 {
-
     $mysqli = connect();
     $result = $mysqli->query(
         'SELECT COUNT(*) AS UserCount FROM Users WHERE '
@@ -218,6 +218,7 @@ function departmentExists($departamentId)
     ');
     return $result->num_rows == 1;
 }
+
 function locationExists($locationId)
 {
     $mysqli = connect();
@@ -294,7 +295,7 @@ function createTraining($trainingName, $startDate, $endDate, $inviteUrl, $cost, 
 
     $trainingId = $mysqli->insert_id;
 
-    //insert participants, bulk insert;
+    //insert participants, bulk insert; || no business logic for now, allow duplicates
     $query = ' INSERT INTO Participants(Name) VALUES ';
     $arr = array();
     foreach ($participants as $participant)
